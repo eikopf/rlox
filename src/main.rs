@@ -1,19 +1,42 @@
 mod bytecode;
 mod value;
+mod vm;
 
-use bytecode::{
-    Op,
-    Chunk,
-};
+use argh::FromArgs;
 
-use crate::value::Value;
+#[derive(FromArgs)]
+/// A rust-based bytecode VM for executing Lox code,
+/// as described in the book Crafting Interpreters by
+/// Robert Nystrom
+struct Rlox {
+    #[argh(subcommand)]
+    subcommand: RloxSubCommand,
+}
+
+#[derive(FromArgs, PartialEq)]
+#[argh(subcommand)]
+enum RloxSubCommand {
+    Run(RunSubCommand),
+    Disassemble(DisassembleSubCommand),
+    Repl(ReplSubCommand),
+}
+
+#[derive(FromArgs, PartialEq)]
+#[argh(subcommand, name = "run")]
+/// Executes a .lox file.
+struct RunSubCommand {}
+
+#[derive(FromArgs, PartialEq)]
+#[argh(subcommand, name = "disassemble")]
+/// Disassembles a .lox file into bytecode.
+struct DisassembleSubCommand {}
+
+#[derive(FromArgs, PartialEq)]
+#[argh(subcommand, name = "repl")]
+/// Loads into a Lox REPL.
+struct ReplSubCommand {}
 
 fn main() {
-    let mut chunk = Chunk::default();
-    chunk.push(Op::Return as u8, 123);
-    let index = chunk.add_constant(1.6 as Value);
-    chunk.push(Op::Constant as u8, 123);
-    chunk.code.push(index); // we expect that constants do not correspond to a line number
-    println!("{}", chunk.disassemble("test chunk"));
-    println!("{:?}", chunk);
+    // cli entrypoint
+    argh::from_env::<Rlox>();
 }

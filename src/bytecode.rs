@@ -28,7 +28,7 @@ impl std::fmt::Display for Op {
 }
 
 /// Represents a sequence of bytecode operations
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Chunk {
     pub code: Vec<u8>,
     pub lines: Vec<usize>, // expected to match the number of opcodes
